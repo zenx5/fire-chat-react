@@ -1,7 +1,14 @@
+import ChatLayout from "./ChatLayout";
+import Home from "./Home";
+
 const routes = [
     {
         path: '/',
-        element: <p>hola mundo</p>
+        element: <Home />
+    },
+    {
+        path: '/chat',
+        element: <ChatLayout />
     }
 ]
 
