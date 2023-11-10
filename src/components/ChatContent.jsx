@@ -1,22 +1,61 @@
 import MessageItem from "./MessageItem"
 import { ROUTER_PATH } from "../tools/constants"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useChatContext } from "../tools/FireContext"
+import { useNavigate, useParams } from "react-router-dom"
+import Conversation from "../services/models/Conversation"
 
 export default function ChatContent(){
     const [message, setMessage] = useState()
-    const title = {}
-    const user = {}
-    const messages = []
+    const [ title, setTitle ] = useState({})
+    const [ messages, setMessages ] = useState([])
+    const { user } = useChatContext()
+    const navigate = useNavigate()
 
-    const handlerChangeTitle = () => {
+    const { id } = useParams()
 
-    }
+    useEffect(()=>{
+        (async ()=>{
+            if( id ) {
+                Conversation.onChange( doc => {
+                    try{
+                        if( !doc.name ) throw new Error("No existe")
+                        setMessages( doc.messages )
+                        setTitle( doc.name )
+                    } catch( error ) {
+                        console.log( 'error')
+                        navigate('/chat')
+                    }
+                }, id)
+            }
+        })()
+    },[id, navigate])
 
     const handlerSend = () => {
+        const newMessages = [
+          ...messages,
+          {
+            content: message,
+            sender: user.id
+          }
+        ]
+        setMessages( prev => newMessages )
+        Conversation.put(id, {
+          messages: newMessages
+        })
+        setMessage(prev => "")
+      }
 
-    }
+      const handlerChangeTitle = (event) => {
+        Conversation.put(id, {
+          name: {
+            ...title,
+            [user.id]: event.target.value
+          }
+        })
+      }
 
-    return false ?  <>
+    return <>
             <div className="flex-grow overflow-auto pt-2">
                 <div className="flex flex-row justify-between mb-2 px-2">
                     { title && user?.id && <input type="text" value={title[user?.id] ?? ""} onChange={handlerChangeTitle} className="bg-transparent px-2 focus:underline outline-none"/>}
@@ -49,10 +88,5 @@ export default function ChatContent(){
                     <span className="sr-only">Send</span>
                 </button>
             </div>
-        </>:
-        <main className="flex flex-col justify-center items-center h-full">
-            <h1 className="text-gray-500 text-5xl">Zenx5&apos;s Chat</h1>
-            <p className="text-gray-500 italic text-xl mt-5">Chat creado con NextJs, Tailwind y Firebase</p>
-            <a href="https://zenx5.pro" target="_blank" rel="noreferrer" className="text-gray-300 italic text-xl mt-5">Por Octavio Martinez</a>
-        </main>
+        </>
 }
