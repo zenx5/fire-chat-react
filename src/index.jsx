@@ -1,13 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
+import Router from './routes/Router';
+import './index.css'
+import { ProviderContext } from './tools/FireContext';
+import { CookiesProvider } from 'react-cookie';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <CookiesProvider>
+      <ProviderContext>
+        <Router />
+      </ProviderContext>
+    </CookiesProvider>
   </React.StrictMode>
 );
 
