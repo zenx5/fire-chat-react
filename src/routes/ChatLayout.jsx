@@ -35,7 +35,7 @@ export default function ChatLayout({ children }){
             name: user,
             password: '123456'
           }
-          const response = await User.post()
+          const response = await User.post(data)
           setCookie(
             process.env.REACT_APP_COOKIE_NAME_USER,
             JSON.stringify({

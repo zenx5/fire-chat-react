@@ -6,6 +6,7 @@ export default function ActionButtons({ isLoged, onAction }){
 
     const handlerAction = (action) => (event) => {
         if( onAction ) onAction(action, action===LOGIN ? nameUser : null)
+        setNameUser("")
     }
 
     return <div className="flex flex-col gap-2">
